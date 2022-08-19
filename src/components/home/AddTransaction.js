@@ -29,7 +29,7 @@ const AddTransaction = () => {
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    if (income - expense < inputData.amount) {
+    if (inputData.type === "Expence" && income - expense < inputData.amount) {
       alert("You have insufficient balance");
     } else if (
       inputData.desc.trim().length < 1 ||
