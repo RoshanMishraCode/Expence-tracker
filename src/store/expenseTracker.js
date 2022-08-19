@@ -1,23 +1,21 @@
 import { createContext, useEffect, useReducer } from "react";
 import transactionReducer from "./transactionReducer";
 import data from "./data";
-import { ADD_TRANSACTION, REMOVE_TRANSACTION } from "./constantActionType";
+import {
+  ADD_DB_DATA,
+  ADD_TRANSACTION,
+  LOCAL_STORAGE_DATA,
+  REMOVE_TRANSACTION,
+} from "./constantActionType";
 
 // Initial state
 const initialState = {
-  transaction: JSON.parse(localStorage.getItem("transaction"))
-    ? JSON.parse(localStorage.getItem("transaction")).transaction.map(
-        (curElemts) => {
-          return {
-            ...curElemts,
-            date: new Date(curElemts.date),
-          };
-        }
-      )
-    : data,
+  transaction: [],
+  // income: 0,
+  // expense: 0,
 };
 
-//  Create context
+// Create context
 const ExpenseTracker = createContext({
   initialState,
 });
@@ -29,8 +27,12 @@ export const ExpenseTrackerProvider = ({ children }) => {
     initialState
   );
 
-  //   Actions
+  // Actions
   const removeTransaction = (id) => {
+    const newTransactions = allTransaction.transaction.filter(
+      (item) => item.id !== id
+    );
+    localStorage.setItem("transactions", JSON.stringify(newTransactions));
     dispatch({
       type: REMOVE_TRANSACTION,
       payload: id,
@@ -38,19 +40,41 @@ export const ExpenseTrackerProvider = ({ children }) => {
   };
 
   const addTransaction = (transaction) => {
+    const newTransactions = [transaction, ...allTransaction.transaction];
+    localStorage.setItem("transactions", JSON.stringify(newTransactions));
     dispatch({
       type: ADD_TRANSACTION,
       payload: transaction,
     });
   };
 
+  const addLocalStorageData = (localStorageTransactions) => {
+    dispatch({
+      type: LOCAL_STORAGE_DATA,
+      payload: localStorageTransactions,
+    });
+  };
+  const addApiData = (apiData) => {
+    dispatch({
+      type: ADD_DB_DATA,
+      payload: apiData,
+    });
+  };
+
   // store data in localstorage
   useEffect(() => {
-    localStorage.setItem("transaction", JSON.stringify(allTransaction));
-    // eslint-disable-next-line
-  }, [allTransaction.transaction]);
+    const localStorageTransactions = JSON.parse(
+      localStorage.getItem("transactions")
+    );
+    if (localStorageTransactions) {
+      addLocalStorageData(localStorageTransactions);
+    } else {
+      addApiData(data);
+    }
+  }, []);
 
   //   Calculate amount
+  // ***** I also want to know. what is the right way to calculate income and expense.
   let income = 0;
   let expense = 0;
 

@@ -19,6 +19,7 @@ const Transaction = () => {
     (item) =>
       item.title.includes(searchData) ||
       item.title.includes(searchData.toLowerCase()) ||
+      item.amount.toString().includes(searchData) ||
       item.title.includes(searchData.toUpperCase()) ||
       item.title.includes(
         searchData.charAt(0).toUpperCase() + searchData.slice(1).toLowerCase()
@@ -49,7 +50,7 @@ const Transaction = () => {
           type="search"
           value={searchData}
           onChange={onChangeHandlear}
-          placeholder="Search by name and type..."
+          placeholder="Search by name, amount and type..."
           aria-label="Search"
         />
       </form>
