@@ -11,8 +11,8 @@ import {
 // Initial state
 const initialState = {
   transaction: [],
-  // income: 0,
-  // expense: 0,
+  income: 0,
+  expense: 0,
 };
 
 // Create context
@@ -73,25 +73,14 @@ export const ExpenseTrackerProvider = ({ children }) => {
     }
   }, []);
 
-  //   Calculate amount
-  // ***** I also want to know. what is the right way to calculate income and expense.
-  let income = 0;
-  let expense = 0;
-
-  allTransaction.transaction.map((curElem) => {
-    return curElem.type === "Income"
-      ? (income = income + curElem.amount)
-      : (expense = expense + curElem.amount);
-  });
-
   return (
     <ExpenseTracker.Provider
       value={{
         transaction: allTransaction.transaction,
         addTransaction,
         removeTransaction,
-        income,
-        expense,
+        income: allTransaction.income,
+        expense: allTransaction.expense,
       }}
     >
       {children}
